@@ -33,6 +33,8 @@ export default defineConfig({
         '**/migrations/**',
         '**/*.dto.ts',
         '**/*.entity.ts',
+        '**/*.config.ts',
+        '**/health/**',
       ],
     },
   },

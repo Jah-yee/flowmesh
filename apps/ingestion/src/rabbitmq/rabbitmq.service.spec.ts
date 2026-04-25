@@ -155,4 +155,68 @@ describe('RabbitMQService', () => {
 
     expect(amqplib.connect).toHaveBeenCalledTimes(11) // initial + 10 retries
   })
+
+  it('recreates channel when channel closes unexpectedly', async () => {
+    const channel = makeChannel()
+    const connection = makeConnection(channel)
+    vi.mocked(amqplib.connect).mockResolvedValue(connection as any)
+
+    const service = new RabbitMQService(makeConfig(), mockLogger)
+    await service.onModuleInit()
+
+    const channelCloseHandler = channel.on.mock.calls.find(([event]) => event === 'close')?.[1]
+    expect(channelCloseHandler).toBeDefined()
+
+    let recreateResolve!: () => void
+    const recreatePromise = new Promise<void>((res) => { recreateResolve = res })
+    connection.createConfirmChannel.mockImplementationOnce(async () => {
+      recreateResolve()
+      return channel as any
+    })
+
+    channelCloseHandler!()
+    await recreatePromise
+
+    // createConfirmChannel called once on init, once on channel recreation
+    expect(connection.createConfirmChannel).toHaveBeenCalledTimes(2)
+  })
+
+  it('does not recreate channel when shutting down', async () => {
+    const channel = makeChannel()
+    const connection = makeConnection(channel)
+    vi.mocked(amqplib.connect).mockResolvedValue(connection as any)
+
+    const service = new RabbitMQService(makeConfig(), mockLogger)
+    await service.onModuleInit()
+    await service.onModuleDestroy()
+
+    const channelCloseHandler = channel.on.mock.calls.find(([event]) => event === 'close')?.[1]
+    channelCloseHandler?.()
+
+    await Promise.resolve()
+    expect(connection.createConfirmChannel).toHaveBeenCalledTimes(1)
+  })
+
+  it('logs error when channel recreation fails', async () => {
+    const channel = makeChannel()
+    const connection = makeConnection(channel)
+    vi.mocked(amqplib.connect).mockResolvedValue(connection as any)
+
+    const service = new RabbitMQService(makeConfig(), mockLogger)
+    await service.onModuleInit()
+
+    const channelCloseHandler = channel.on.mock.calls.find(([event]) => event === 'close')?.[1]
+
+    let errorResolve!: () => void
+    const errorPromise = new Promise<void>((res) => { errorResolve = res })
+    connection.createConfirmChannel.mockImplementationOnce(async () => {
+      throw new Error('channel creation failed')
+    })
+    vi.mocked(mockLogger.error).mockImplementationOnce(() => { errorResolve() })
+
+    channelCloseHandler!()
+    await errorPromise
+
+    expect(mockLogger.error).toHaveBeenCalled()
+  })
 })
