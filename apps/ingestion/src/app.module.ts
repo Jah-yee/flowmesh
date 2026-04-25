@@ -6,6 +6,7 @@ import { RabbitMQModule } from './rabbitmq/rabbitmq.module'
 import { RedisModule } from './redis/redis.module'
 import { IngestionModule } from './ingestion/ingestion.module'
 import { HealthModule } from './health/health.module'
+import { HttpExceptionFilter } from './common/filters/http-exception.filter'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -32,5 +33,6 @@ const isDev = process.env.NODE_ENV !== 'production'
     IngestionModule,
     HealthModule,
   ],
+  providers: [HttpExceptionFilter],
 })
 export class AppModule {}
