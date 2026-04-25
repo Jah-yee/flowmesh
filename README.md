@@ -65,6 +65,8 @@ docker compose up
 
 FlowMesh is a polyglot microservices platform. Each service has a single, clearly bounded responsibility.
 
+![FlowMesh Architecture](docs/architecture.png)
+
 ```
                        ┌─────────────────────────────────────────┐
                        │              API Gateway                │
