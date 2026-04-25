@@ -27,9 +27,13 @@ docker compose up
 
 ---
 
-## Features
+## What FlowMesh Is
 
-### Community Edition — free, open source, always
+Open source. Self-hosted. Free forever. No license keys. No feature flags. No artificial limits on events or destinations.
+
+Clone the repo, run one command, and have a full production event pipeline in 60 seconds. That is it.
+
+## Features
 
 | Feature | Status |
 |---|---|
@@ -42,22 +46,19 @@ docker compose up
 | Dead letter queue with one-click replay | 🔧 In development |
 | Real-time event dashboard | 🔧 In development |
 | Visual pipeline builder UI | 🔧 In development |
-| Basic alerting rules | 🔧 In development |
-| Single workspace | 🔧 In development |
+| Alerting engine | 🔧 In development |
 | Docker Compose deployment | ✅ Available |
-| REST API | ✅ Available |
+| Kubernetes Helm chart | 🔧 In development |
 | Node.js SDK | 🔧 In development |
 | Go SDK | 🔧 In development |
 
-### Enterprise Edition — paid license
+## Deployment
 
-- Multiple workspaces and organizations
-- SSO / SAML authentication
-- Fine-grained RBAC and audit logs
-- Kubernetes Helm chart with auto-scaling
-- Advanced rate limiting tiers
-- Custom destination plugins
-- SLA-based priority support
+**Docker Compose** — for solo developers and small teams. One server, one command. Runs comfortably on an $11/month Hetzner VPS.
+
+**Kubernetes + Helm** — for larger teams who want to self-host at scale with independent scaling per service. Also free and open source — we ship the Helm chart so you have the tools to do it properly.
+
+Both deployment options are fully open source with no restrictions.
 
 ---
 
@@ -323,7 +324,7 @@ All significant architectural decisions are documented in [`docs/adr/`](docs/adr
 - Why Go for the delivery service
 - Why two Redis instances
 - Database-per-service strategy (schema isolation in PostgreSQL)
-- Open core model — Community vs Enterprise
+- Open core model — self-hosted community vs FlowMesh Cloud
 
 ---
 
@@ -350,20 +351,28 @@ Please open an issue before starting significant work so we can discuss the appr
 
 ---
 
+## FlowMesh Cloud
+
+If you want FlowMesh without managing the infrastructure yourself, [FlowMesh Cloud](https://getflowmesh.com) is a hosted version — same pipeline, same SDK, no server to run.
+
+The self-hosted open source version has no limitations. FlowMesh Cloud is for teams who prefer not to operate it themselves.
+
+---
+
 ## Roadmap
 
 ### Phase 1 — Core pipeline (current)
 Ingestion → RabbitMQ → Pipeline → Go Delivery → destinations → DLQ.
-All distributed systems patterns implemented: rate limiting, idempotency, circuit breaker, backoff retry, dead letter queue.
+All distributed systems patterns: rate limiting, idempotency, circuit breaker, backoff retry, dead letter queue.
 
 ### Phase 2 — Dashboard
 Real-time event feed (WebSocket + Redis pub/sub), visual pipeline builder (React Flow), events explorer, DLQ replay UI.
 
 ### Phase 3 — Platform features
-Multi-tenancy, workspaces, API keys, RBAC, alerting engine, usage quotas.
+Auth, API keys, alerting engine, complete destination library.
 
-### Phase 4 — Enterprise edition
-SSO/SAML, audit logs, Kubernetes Helm chart, custom destination plugins.
+### Phase 4 — Kubernetes
+Helm chart for teams self-hosting at scale. Independent scaling per service.
 
 ### Phase 5 — Launch
 One-command Docker Compose, documentation site, Hacker News and Product Hunt launch.
