@@ -12,6 +12,9 @@ infra-down:
 infra-logs:
 	$(COMPOSE) logs -f postgres redis-ephemeral redis-persistent rabbitmq
 
+infra-psql:
+	docker exec -it flowmesh-postgres psql -U flowmesh -d flowmesh
+
 # ─── Full stack ───────────────────────────────────────────────────────────────
 
 up:
@@ -77,6 +80,6 @@ env-setup:
 		echo "skipped .env (already exists)"; \
 	fi
 
-.PHONY: infra-up infra-down infra-logs up down down-v logs \
+.PHONY: infra-up infra-down infra-logs infra-psql up down down-v logs \
         ingestion-dev ingestion-migrate-create ingestion-migrate ingestion-generate \
         test test-coverage test-watch install gen-jwt-secret env-setup
