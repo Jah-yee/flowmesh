@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build outputs
+dist/
+build/
+.turbo/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# Go
+bin/
+*.exe
+
+# os
+.DS_Store
+Thumbs.db
+
+# test coverage
+coverage/
+
+# logs
+*.log
+logs/
