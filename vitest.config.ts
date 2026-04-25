@@ -33,6 +33,12 @@ export default defineConfig({
         '**/*.dto.ts',
         '**/*.entity.ts',
         '**/vitest.config.ts',
+        '**/*.integration.spec.ts',
+        '**/test-setup.integration.ts',
+        '**/health/**',
+        '**/*.config.ts',
+        '**/*.config.js',
+        '**/shared-types/**',
       ],
     },
 

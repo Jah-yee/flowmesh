@@ -31,6 +31,11 @@ describe('Ingestion (integration)', () => {
     prisma = app.get(PrismaService)
     amqpConnection = await amqplib.connect(RABBITMQ_URL)
     amqpChannel = await amqpConnection.createChannel()
+
+    // Declare full topology so tests work against a fresh CI RabbitMQ (no pre-loaded definitions)
+    await amqpChannel.assertExchange('flowmesh.events', 'topic', { durable: true })
+    await amqpChannel.assertQueue(QUEUE, { durable: true })
+    await amqpChannel.bindQueue(QUEUE, 'flowmesh.events', 'event.#')
   })
 
   afterEach(async () => {
@@ -39,8 +44,8 @@ describe('Ingestion (integration)', () => {
   })
 
   afterAll(async () => {
-    await amqpChannel.close()
-    await amqpConnection.close()
+    try { await amqpChannel.close() } catch { /* already closed */ }
+    try { await amqpConnection.close() } catch { /* already closed */ }
     await app.close()
   })
 
@@ -89,7 +94,7 @@ describe('Ingestion (integration)', () => {
   })
 
   it('POST /events → message published to rabbitmq ingestion queue', async () => {
-    const queueBefore = await amqpChannel.checkQueue(QUEUE)
+    const queueBefore = await amqpChannel.assertQueue(QUEUE, { durable: true })
     const depthBefore = queueBefore.messageCount
 
     await request(app.getHttpServer())
@@ -105,7 +110,7 @@ describe('Ingestion (integration)', () => {
       })
       .expect(202)
 
-    const queueAfter = await amqpChannel.checkQueue(QUEUE)
+    const queueAfter = await amqpChannel.assertQueue(QUEUE, { durable: true })
     expect(queueAfter.messageCount).toBe(depthBefore + 1)
   })
 
