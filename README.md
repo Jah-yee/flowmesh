@@ -67,32 +67,6 @@ FlowMesh is a polyglot microservices platform. Each service has a single, clearl
 
 ![FlowMesh Architecture](docs/architecture.png)
 
-```
-                       ┌─────────────────────────────────────────┐
-                       │              API Gateway                │
-                       │     Auth · Rate Limiting · Routing      │
-                       └──────────────────┬──────────────────────┘
-                                          │
-                    ┌─────────────────────▼─────────────────────┐
-                    │             Ingestion Service              │
-                    │  Validate · Deduplicate · Persist · Queue  │
-                    └─────────────────────┬─────────────────────┘
-                                          │
-                                     RabbitMQ
-                                          │
-                    ┌─────────────────────▼─────────────────────┐
-                    │             Pipeline Service               │
-                    │     Filter · Transform · Enrich · Fan-out  │
-                    └─────────────────────┬─────────────────────┘
-                                          │
-                    ┌─────────────────────▼─────────────────────┐
-                    │          Delivery Service (Go)             │
-                    │  Circuit Breaker · Retry · DLQ · Deliver   │
-                    └──┬──────────┬──────────┬──────────┬───────┘
-                       │          │          │          │
-                   Postgres    Slack        S3      Webhooks
-```
-
 ### Services
 
 | Service | Language | Responsibility |
