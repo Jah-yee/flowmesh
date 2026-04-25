@@ -39,6 +39,7 @@ ingestion-migrate-create:
 
 ingestion-migrate:
 	pnpm --filter @flowmesh/ingestion prisma:migrate:deploy
+	pnpm --filter @flowmesh/ingestion prisma:generate
 
 ingestion-generate:
 	pnpm --filter @flowmesh/ingestion prisma:generate
@@ -47,6 +48,9 @@ ingestion-generate:
 
 test:
 	pnpm test
+
+test-integration:
+	pnpm vitest run --config vitest.integration.config.ts
 
 test-coverage:
 	pnpm test:coverage
@@ -82,4 +86,4 @@ env-setup:
 
 .PHONY: infra-up infra-down infra-logs infra-psql up down down-v logs \
         ingestion-dev ingestion-migrate-create ingestion-migrate ingestion-generate \
-        test test-coverage test-watch install gen-jwt-secret env-setup
+        test test-integration test-coverage test-watch install gen-jwt-secret env-setup
